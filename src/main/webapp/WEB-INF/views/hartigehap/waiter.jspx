@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div id="body" xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:joda="http://www.joda.org/joda/time/tags" version="2.0"
+	xmlns:spring="http://www.springframework.org/tags"
+	xmlns:form="http://www.springframework.org/tags/form" 
+	xmlns:sec="http://www.springframework.org/security/tags">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<jsp:output omit-xml-declaration="yes" />
+
+	<spring:message code="label_waiter_subsystem" var="labelWaiterSubsystem" />
+	<spring:message code="label_restaurant" var="labelRestaurant" />
+	<spring:message code="label_all_prepared_orders" var="labelAllPreparedOrders" />
+	<spring:message code="label_prepared_order" var="labelPreparedOrder" />
+	<spring:message code="label_served_order_button" var="labelServedOrderButton" />
+	<spring:message code="label_all_submitted_bills" var="labelAllSubmittedBills" />
+	<spring:message code="label_submitted_bill" var="labelSubmittedBill" />
+	<spring:message code="label_paid_bill_button" var="labelPaidBillButton" />
+
+	<spring:url var="showRestaurant" value="/restaurants/${restaurant.id}" />		
+	
+   	<h1>${labelWaiterSubsystem} (${labelRestaurant} <a href="${showRestaurant}">${restaurant.id}</a>)</h1>
+
+	<c:if test="${not empty message}">
+		<div id="message" class="${message.type}">${message.message}</div>
+	</c:if>
+
+	<table>
+		<thead>
+			<tr>
+				<th>${labelAllPreparedOrders}</th><th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items="${allPreparedOrders}" var="preparedOrder">
+				<tr>
+					<spring:url var="showOrder" value="/waiter/orders/${preparedOrder.id}" />
+					<td>
+						<a href="${showOrder}">${labelPreparedOrder} ${preparedOrder.bill.diningTable.tableNr}</a></td>
+					<td>
+						<sec:authorize access="hasRole('ROLE_EMPLOYEE')">
+							<spring:url var="servedOrderUrl"
+								value="/waiter/orders/${preparedOrder.id}" />
+							<form:form name="servedOrderForm" action="${servedOrderUrl}" method="put">
+								<input type="hidden" name="event" value="orderHasBeenServed" />
+								<table>
+									<tr>
+										<td><input type="submit" value="${labelServedOrderButton}" /></td>
+									</tr>
+								</table>
+							</form:form>
+						</sec:authorize>
+					</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+
+	<table>
+		<thead>
+			<tr>
+				<th>${labelAllSubmittedBills}</th><th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items="${allSubmittedBills}" var="submittedBill">
+				<tr>
+					<spring:url var="showBill" value="/waiter/bills/${submittedBill.id}" />
+					<td>
+						<a href="${showBill}">${labelSubmittedBill} ${submittedBill.diningTable.tableNr}</a></td>
+					<td>
+						<sec:authorize access="hasRole('ROLE_EMPLOYEE')">
+							<spring:url var="billPaidUrl"
+								value="/waiter/bills/${submittedBill.id}" />
+							<form:form name="paidBillForm" action="${billPaidUrl}" method="put">
+								<input type="hidden" name="event" value="billHasBeenPaid" />
+								<table>
+									<tr>
+										<td><input type="submit" value="${labelPaidBillButton}" /></td>
+									</tr>
+								</table>
+							</form:form>
+						</sec:authorize>
+					</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+	
+</div>

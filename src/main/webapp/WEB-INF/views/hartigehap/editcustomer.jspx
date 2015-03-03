@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:spring="http://www.springframework.org/tags"
+	xmlns:form="http://www.springframework.org/tags/form" 
+	xmlns:sec="http://www.springframework.org/security/tags"
+	version="2.0">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<jsp:output omit-xml-declaration="yes" />
+	<spring:message code="label_restaurant" var="labelRestaurant" />
+	<spring:message code="label_customer_subsystem" var="labelCustomerSubsystem" />
+	<spring:message code="label_customer_new" var="labelCustomerNew" />
+	<spring:message code="label_customer_update" var="labelCustomerUpdate" />
+	<spring:message code="label_customer_first_name"
+		var="labelCustomerFirstName" />
+	<spring:message code="label_customer_last_name"
+		var="labelCustomerLastName" />
+	<spring:message code="label_customer_birth_date"
+		var="labelCustomerBirthDate" />
+	<spring:message code="label_customer_description"
+		var="labelCustomerDescription" />
+	<spring:message code="label_customer_photo" var="labelCustomerPhoto" />
+	<spring:eval
+		expression="customer.id == null ? labelCustomerNew:labelCustomerUpdate"
+		var="formTitle" />
+
+	<script type="text/javascript">
+		$(function() {
+			$('#birthDate').datepicker({
+				dateFormat : 'yy-mm-dd',
+				changeYear : true
+			});
+
+			$("#customerDescription").ckeditor({
+				toolbar : 'Basic',
+				uiColor : '#CCCCCC'
+			});
+		});
+	</script>
+
+	<h1>${labelCustomerSubsystem} (${labelRestaurant} <a href="${showRestaurant}">${restaurant.id}</a>)</h1>
+
+	<h3>${formTitle}</h3>
+	
+	<div id="customerUpdate">
+	
+		<!-- it is a create -->
+		<!-- no action attribute specified, meaning that the same URL is used, but as a POST -->
+		<form:form modelAttribute="customer" id="customerUpdateForm"
+			enctype="multipart/form-data" method="${customer.id==null ? 'post':'put'}">
+			
+			<c:if test="${not empty message}">
+				<div id="message" class="${message.type}">${message.message}</div>
+			</c:if>
+			
+			<form:label path="firstName">
+				${labelCustomerFirstName}*
+			</form:label>
+			<form:input path="firstName" />
+			<div>
+				<!-- http://stackoverflow.com/questions/18661742/eclipse-warning-list-is-a-raw-type-in-a-spring-jsp-form -->
+				<form:errors path="firstName" cssClass="error" />
+			</div>
+			<p />
+			<form:label path="lastName">
+				${labelCustomerLastName}*
+			</form:label>
+			<form:input path="lastName" />
+			<div>
+				<!-- http://stackoverflow.com/questions/18661742/eclipse-warning-list-is-a-raw-type-in-a-spring-jsp-form -->
+				<form:errors path="lastName" cssClass="error" />
+			</div>
+			<p />
+			<form:label path="birthDate">
+				${labelCustomerBirthDate}
+			</form:label>
+			<form:input path="birthDate" id="birthDate" />
+			<div>
+				<!-- http://stackoverflow.com/questions/18661742/eclipse-warning-list-is-a-raw-type-in-a-spring-jsp-form -->
+				<form:errors path="birthDate" cssClass="error" />
+			</div>
+			<p />
+			<form:label path="description">
+				${labelCustomerDescription}
+			</form:label>
+			<form:textarea cols="60" rows="8" path="description"
+				id="customerDescription" />
+			<div>
+				<!-- http://stackoverflow.com/questions/18661742/eclipse-warning-list-is-a-raw-type-in-a-spring-jsp-form -->
+				<form:errors path="description" cssClass="error" />
+			</div>
+			<p />
+
+			<label for="file"> ${labelCustomerPhoto} </label>
+			<input name="file" type="file" />
+			<p />
+			
+			<button type="submit"
+				class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+				<span class="ui-button-text">Save</span>
+			</button>
+			<button type="reset"
+				class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+				<span class="ui-button-text">Reset</span>
+			</button>
+
+		</form:form>
+	</div>
+
+</div>

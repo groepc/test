@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:spring="http://www.springframework.org/tags" version="2.0"
+	xmlns:sec="http://www.springframework.org/security/tags">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<jsp:output omit-xml-declaration="yes" />
+
+	<spring:message code="label_restaurant" var="labelRestaurant" />
+	<spring:message code="label_customer_subsystem" var="labelCustomerSubsystem" />
+	<spring:message code="label_create_customer" var="labelCreateCustomer"/>
+	<spring:message code="label_customer_list" var="labelCustomerList" />
+	<spring:message code="label_customer_first_name"
+		var="labelCustomerFirstName" />
+	<spring:message code="label_customer_last_name"
+		var="labelCustomerLastName" />
+	<spring:message code="label_customer_birth_date"
+		var="labelCustomerBirthDate" />
+	<spring:message code="label_customer_restaurants"
+		var="labelCustomerRestaurants" />
+	<spring:url value="/restaurants/${restaurant.id}/customers?form" var="createCustomerUrl"/>
+	<spring:url value="/restaurants/${restaurant.id}/customers" var="showCustomerUrl" />
+	<spring:url value="/restaurants/${restaurant.id}/customers" var="customersUrl" />
+
+	<script type="text/javascript">
+		$(function(){
+			$("#list").jqGrid({
+				url : '${customersUrl}/listgrid',
+				datatype : 'json',
+				mtype : 'GET',
+				colNames : [ '${labelCustomerFirstName}',
+					'${labelCustomerLastName}',
+					'${labelCustomerBirthDate}' ],
+				colModel : [ {
+						name : 'firstName',
+						index : 'firstName',
+						width : 150
+					}, {
+						name : 'lastName',
+						index : 'lastName',
+						width : 100
+					}, {
+						name : 'birthDateString',
+						index : 'birthDate',
+						width : 100
+					} ],
+				jsonReader : {
+					root : "customerData",
+					page : "currentPage",
+					total : "totalPages",
+					records : "totalRecords",
+					repeatitems : false,
+					id : "id"
+				},
+				pager : '#pager',
+					rowNum : 10,
+					rowList : [ 10, 20, 30 ],
+					sortname : 'firstName',
+					sortorder : 'asc',
+					viewrecords : true,
+					gridview : true,
+					height : 250,
+					width : 500,
+					caption : '${labelCustomerList}',
+					onSelectRow : function(id) {
+						document.location.href = "${showCustomerUrl}/" + id;
+					}
+				});
+		});
+	</script>
+
+	<h1>${labelCustomerSubsystem} (${labelRestaurant} <a href="${showRestaurant}">${restaurant.id}</a>)</h1>
+
+	<c:if test="${not empty message}">
+		<div id="message" class="${message.type}">${message.message}</div>
+	</c:if>
+
+	<div>
+		<table id="list">
+			<tr>
+				<td />
+			</tr>
+		</table>
+	</div>
+	<a href="${createCustomerUrl}">${labelCreateCustomer}</a>
+	<div id="pager"></div>
+
+</div>

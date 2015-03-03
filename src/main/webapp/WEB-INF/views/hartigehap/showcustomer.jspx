@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:spring="http://www.springframework.org/tags"
+	xmlns:form="http://www.springframework.org/tags/form"
+	xmlns:joda="http://www.joda.org/joda/time/tags" 
+	xmlns:sec="http://www.springframework.org/security/tags"
+	version="2.0">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<jsp:output omit-xml-declaration="yes" />
+
+	<spring:message code="label_restaurant" var="labelRestaurant" />
+	<spring:message code="label_customer_subsystem" var="labelCustomerSubsystem" />
+	<spring:message code="label_customer_info" var="labelCustomerInfo" />
+	<spring:message code="label_customer_first_name"
+		var="labelCustomerFirstName" />
+	<spring:message code="label_customer_last_name"
+		var="labelCustomerLastName" />
+	<spring:message code="label_customer_birth_date"
+		var="labelCustomerBirthDate" />
+	<spring:message code="label_customer_description"
+		var="labelCustomerDescription" />
+	<spring:message code="label_customer_update" var="labelCustomerUpdate" />
+	<spring:message code="label_customer_delete" var="labelCustomerDelete" />
+	<spring:message code="date_format_pattern" var="dateFormatPattern" />
+
+	<spring:message code="label_customer_photo" var="labelCustomerPhoto" />
+
+	<spring:url value="/restaurants/${restaurant.id}/customers" var="editCustomerUrl" />
+	<spring:url value="/restaurants/${restaurant.id}/customers" var="deleteCustomerUrl" />
+	<spring:url value="/restaurants/${restaurant.id}/customers" var="customerPhotoUrl" />
+
+ 	<h1>${labelCustomerSubsystem} (${labelRestaurant} <a href="${showRestaurant}">${restaurant.id}</a>)</h1>
+ 
+	<h3>${labelCustomerInfo}</h3>
+
+	<div id="customerInfo">
+
+		<c:if test="${not empty message}">
+			<div id="message" class="${message.type}">${message.message}</div>
+		</c:if>
+
+		<table>
+			<tr>
+				<td>${labelCustomerFirstName}</td>
+				<td>${customer.firstName}</td>
+			</tr>
+			<tr>
+				<td>${labelCustomerLastName}</td>
+				<td>${customer.lastName}</td>
+			</tr>
+			<tr>
+				<td>${labelCustomerBirthDate}</td>
+				<td><joda:format value="${customer.birthDate}"
+						pattern="${dateFormatPattern}" /></td>
+			</tr>
+			<tr>
+				<td>${labelCustomerDescription}</td>
+				<td>${customer.description}</td>
+			</tr>
+			<tr>
+				<td>${labelCustomerPhoto}</td>
+				<td><img src="${customerPhotoUrl}/${customer.id}/photo"></img></td>
+			</tr>
+		</table>
+		<sec:authorize access="hasRole('ROLE_EMPLOYEE')">
+			<a href="${editCustomerUrl}/${customer.id}?form">${labelCustomerUpdate}</a> |
+        	<a href="${deleteCustomerUrl}/${customer.id}?delete">${labelCustomerDelete}</a>
+		</sec:authorize>
+
+	</div>
+</div>

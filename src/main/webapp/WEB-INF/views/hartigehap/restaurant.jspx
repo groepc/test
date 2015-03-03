@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div id="body" xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:joda="http://www.joda.org/joda/time/tags" version="2.0"
+	xmlns:spring="http://www.springframework.org/tags"
+	xmlns:sec="http://www.springframework.org/security/tags">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<jsp:output omit-xml-declaration="yes" />
+
+	<spring:message code="label_restaurant" var="labelRestaurant" />
+	<spring:message code="label_ordering_subsystem" var="labelOrderingSubsystem" />
+	<spring:message code="label_kitchen_subsystem" var="labelKitchenSubsystem" />
+	<spring:message code="label_waiter_subsystem" var="labelWaiterSubsystem" />
+	<spring:message code="label_customer_subsystem" var="labelCustomerSubsystem" />
+	<spring:message code="label_dining_tables" var="labelDiningTables" />
+	<spring:message code="label_dining_table" var="labelDiningTable" />
+
+
+	<h1>${labelRestaurant} ${restaurant.id}</h1>
+
+	<h3>${labelOrderingSubsystem}</h3>
+
+	<c:if test="${not empty message}">
+		<div id="message" class="${message.type}">${message.message}</div>
+	</c:if>
+
+	<table>
+		<thead>
+			<tr>
+				<th>${labelDiningTables}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items="${restaurant.diningTables}" var="diningTable">
+				<spring:url var="showTable" value="/diningTables/${diningTable.id}" />					
+				<tr>
+					<td><a href="${showTable}">${labelDiningTable} ${diningTable.tableNr}</a></td>							
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+
+    <sec:authorize access="hasRole('ROLE_EMPLOYEE')">
+		<h3>${labelKitchenSubsystem}</h3>
+		<spring:url var="kitchenSubsystem" value="/restaurants/${restaurant.id}/kitchen" />					
+		<a href="${kitchenSubsystem}">${labelKitchenSubsystem}</a>							
+	
+		<h3>${labelWaiterSubsystem}</h3>
+		<spring:url var="waiterSubsystem" value="/restaurants/${restaurant.id}/waiter" />					
+		<a href="${waiterSubsystem}">${labelWaiterSubsystem}</a>							
+	
+		<h3>${labelCustomerSubsystem}</h3>
+		<spring:url var="customerSubsystem" value="/restaurants/${restaurant.id}/customers" />					
+		<a href="${customerSubsystem}">${labelCustomerSubsystem}</a>							
+    </sec:authorize>
+
+</div>

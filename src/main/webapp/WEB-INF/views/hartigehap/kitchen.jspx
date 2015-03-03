@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div id="body" xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:joda="http://www.joda.org/joda/time/tags" version="2.0"
+	xmlns:spring="http://www.springframework.org/tags"
+	xmlns:form="http://www.springframework.org/tags/form" 
+	xmlns:sec="http://www.springframework.org/security/tags">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<jsp:output omit-xml-declaration="yes" />
+
+	<spring:message code="label_kitchen_subsystem" var="labelKitchenSubsystem" />
+	<spring:message code="label_restaurant" var="labelRestaurant" />
+	<spring:message code="label_all_submitted_orders" var="labelAllSubmittedOrders" />
+	<spring:message code="label_submitted_order" var="labelSubmittedOrder" />
+	<spring:message code="label_plan_order_button" var="labelPlanOrderButton" />
+	<spring:message code="label_all_planned_orders" var="labelAllPlannedOrders" />
+	<spring:message code="label_planned_order" var="labelPlannedOrder" />
+	<spring:message code="label_prepared_order_button" var="labelPreparedOrderButton" />
+
+	<spring:url var="showRestaurant" value="/restaurants/${restaurant.id}" />
+	
+	<h1>${labelKitchenSubsystem} (${labelRestaurant} <a href="${showRestaurant}">${restaurant.id}</a>)</h1>
+	
+	<c:if test="${not empty message}">
+		<div id="message" class="${message.type}">${message.message}</div>
+	</c:if>
+
+	<table>
+		<thead>
+			<tr>
+				<th>${labelAllSubmittedOrders}</th><th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items="${allSubmittedOrders}" var="submittedOrder">
+				<tr>
+					<spring:url var="showOrder" value="/kitchen/orders/${submittedOrder.id}" />
+					<td>
+						<a href="${showOrder}">${labelSubmittedOrder} ${submittedOrder.bill.diningTable.tableNr}</a></td>
+					<td>
+						<sec:authorize access="hasRole('ROLE_EMPLOYEE')">
+							<spring:url var="planOrderUrl"
+								value="/kitchen/orders/${submittedOrder.id}" />
+							<form:form name="planOrderForm" action="${planOrderUrl}" method="put">
+								<input type="hidden" name="event" value="planOrder" />
+								<table>
+									<tr>
+										<td><input type="submit" value="${labelPlanOrderButton}" /></td>
+									</tr>
+								</table>
+							</form:form>
+						</sec:authorize>
+					</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+
+
+	<table>
+		<thead>
+			<tr>
+				<th>${labelAllPlannedOrders}</th><th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items="${allPlannedOrders}" var="plannedOrder">
+				<tr>
+					<spring:url var="showOrder" value="/kitchen/orders/${plannedOrder.id}" />
+					<td>
+						<a href="${showOrder}">${labelPlannedOrder} ${plannedOrder.bill.diningTable.tableNr}</a></td>
+					<td>
+						<sec:authorize access="hasRole('ROLE_EMPLOYEE')">
+							<spring:url var="preparedOrderUrl"
+								value="/kitchen/orders/${plannedOrder.id}" />
+							<form:form name="preparedOrderForm" action="${preparedOrderUrl}" method="put">
+								<input type="hidden" name="event" value="orderHasBeenPrepared" />
+								<table>
+									<tr>
+										<td><input type="submit" value="${labelPreparedOrderButton}" /></td>
+									</tr>
+								</table>
+							</form:form>
+						</sec:authorize>
+					</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+
+</div>

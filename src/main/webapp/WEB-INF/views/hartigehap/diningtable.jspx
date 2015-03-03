@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div id="body" xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:joda="http://www.joda.org/joda/time/tags"
+	xmlns:spring="http://www.springframework.org/tags"
+	xmlns:form="http://www.springframework.org/tags/form"
+	xmlns:sec="http://www.springframework.org/security/tags" version="2.0">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<jsp:output omit-xml-declaration="yes" />
+
+	<spring:message code="label_dining_menu" var="labelDiningMenu" />
+	<spring:message code="label_restaurant" var="labelRestaurant" />
+	<spring:message code="label_current_order" var="labelCurrentOrder" />
+	<spring:message code="label_submit_order_button"
+		var="labelSubmitOrderButton" />
+	<spring:message code="label_current_bill" var="labelCurrentBill" />
+	<spring:message code="label_submit_bill_button"
+		var="labelSubmitBillButton" />
+	<spring:message code="label_price_current_order"
+		var="labelPriceCurrentOrder" />
+	<spring:message code="label_total_price_prev_orders"
+		var="labelTotalPricePrevOrders" />
+	<spring:message code="label_menu_item" var="labelMenuItem" />
+	<spring:message code="label_food_category" var="labelFoodCategory" />
+	<spring:message code="label_price" var="labelPrice" />
+	<spring:message code="label_add_button" var="labelAddButton" />
+	<spring:message code="label_remove_button" var="labelRemoveButton" />
+	<spring:message code="label_currency" var="labelCurrency" />
+	<spring:url var="showRestaurant" value="/restaurants/${restaurant.id}" />
+
+	<h1>
+		${labelDiningMenu} ${diningTable.tableNr} (${labelRestaurant} <a
+			href="${showRestaurant}">${restaurant.id}</a>)
+	</h1>
+
+
+
+	<c:if test="${not empty message}">
+		<div id="message" class="${message.type}">${message.message}</div>
+	</c:if>
+
+	<table>
+		<thead>
+			<tr>
+				<th>${labelCurrentOrder}</th>
+				<th><spring:url var="submitOrderUrl"
+						value="/diningTables/${diningTable.id}" /> <form:form
+						name="submitOrderForm" action="${submitOrderUrl}" method="put">
+						<input type="hidden" name="event" value="submitOrder" />
+						<table>
+							<tr>
+								<td><input type="submit" value="${labelSubmitOrderButton}" /></td>
+							</tr>
+						</table>
+					</form:form></th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items="${diningTable.currentBill.currentOrder.orderItems}"
+				var="orderItem">
+				<tr>
+					<td>${orderItem.description()}</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+
+
+	<table>
+		<thead>
+			<tr>
+				<th>${labelCurrentBill}</th>
+				<th><spring:url var="submitBillUrl"
+						value="/diningTables/${diningTable.id}" /> <form:form
+						name="submitBillForm" action="${submitBillUrl}" method="put">
+						<input type="hidden" name="event" value="submitBill" />
+						<table>
+							<tr>
+								<td><input type="submit" value="${labelSubmitBillButton}" /></td>
+							</tr>
+						</table>
+					</form:form></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>${labelPriceCurrentOrder}:
+					${diningTable.currentBill.currentOrder.price}</td>
+			</tr>
+			<tr>
+				<td>${labelTotalPricePrevOrders}:
+					${diningTable.currentBill.priceSubmittedOrSuccessiveStateOrders}</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<div id="tabs">
+		<ul>
+			<c:forEach items="${restaurant.menu.foodCategories}"
+				var="foodCategory">
+				<li><a href="#tabs-${foodCategory.id}">${foodCategory.tag}</a></li>
+			</c:forEach>
+		</ul>
+		<c:forEach items="${restaurant.menu.foodCategories}"
+			var="foodCategory">
+			<div id="tabs-${foodCategory.id}">
+				<c:forEach items="${foodCategory.menuItems}" var="menuItem">
+					<spring:url var="imageUrl"
+						value="/resources/images/${menuItem.imageFileName}" />
+					<div id="menuitem">
+						<div>${menuItem.id}</div>
+						<div>
+							<img id="menuitemimg" src="${imageUrl}" />
+						</div>
+						${labelPrice} ${menuItem.price} ${labelCurrency}
+						<spring:url var="addOrderItemUrl"
+							value="/diningTables/${diningTable.id}/menuItems" />
+						<form:form name="addOrderItemForm" action="${addOrderItemUrl}"
+							method="post">
+							<input type="hidden" name="menuItemName" value="${menuItem.id}" />
+							<table>
+								<tr>
+									<td><input type="submit" value="${labelAddButton}" /></td>
+								</tr>
+							</table>
+						</form:form>
+						<spring:url var="deleteOrderItemUrl"
+							value="/diningTables/${diningTable.id}/menuItems/${menuItem.id}" />
+						<form:form name="deleteOrderItemForm"
+							action="${deleteOrderItemUrl}" method="delete">
+							<table>
+								<tr>
+									<td><input type="submit" value="${labelRemoveButton}" /></td>
+								</tr>
+							</table>
+						</form:form>
+					</div>
+				</c:forEach>
+
+			</div>
+		</c:forEach>
+	</div>
+</div>

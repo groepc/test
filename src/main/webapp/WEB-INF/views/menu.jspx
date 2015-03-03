@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div id="menu" xmlns:jsp="http://java.sun.com/JSP/Page" 
+     xmlns:c="http://java.sun.com/jsp/jstl/core" 
+     xmlns:spring="http://www.springframework.org/tags"    
+     xmlns:sec="http://www.springframework.org/security/tags"     
+     version="2.0">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<jsp:output omit-xml-declaration="yes" />
+	
+	<spring:message code="label_employee_area" var="labelEmployeeArea"/>
+	<spring:message code="label_admin_area" var="labelAdminArea"/>
+    <spring:message code="label_login" var="labelLogin"/>
+    <spring:message code="label_user_name" var="labelUserName"/>
+    <spring:message code="label_password" var="labelPassword"/>
+    <spring:url var="loginUrl" value="/j_spring_security_check" />
+	<spring:message code="label_restaurants" var="labelRestaurants" />
+
+	<spring:message code="label_restaurant" var="labelRestaurant" />
+	<spring:message code="label_subsystems" var="labelSubsystems" />
+	<spring:message code="label_ordering_subsystem" var="labelOrderingSubsystem" />
+	<spring:message code="label_kitchen_subsystem" var="labelKitchenSubsystem" />
+	<spring:message code="label_waiter_subsystem" var="labelWaiterSubsystem" />
+	<spring:message code="label_customer_subsystem" var="labelCustomerSubsystem" />
+	<spring:message code="label_dining_tables" var="labelDiningTables" />
+	<spring:message code="label_dining_table" var="labelDiningTable" />
+
+    <sec:authorize access="isAnonymous()">
+	    <h3>${labelEmployeeArea}</h3>
+    </sec:authorize>
+    <sec:authorize access="hasRole('ROLE_EMPLOYEE')">
+		<h3>${labelRestaurants}</h3>
+		<c:forEach items="${restaurants}" var="restaurant">
+			<spring:url var="showRestaurant" value="/restaurants/${restaurant.id}" />					
+			<a href="${showRestaurant}">${restaurant.id}</a>							
+		</c:forEach>
+	
+	
+		<c:if test="${not empty restaurant}">
+			<h3>${restaurant.id} ${labelSubsystems}</h3>
+	
+			<c:forEach items="${restaurant.diningTables}" var="diningTable">
+				<spring:url var="showTable" value="/diningTables/${diningTable.id}" />					
+				<tr>
+					<td><a href="${showTable}">${restaurant.id} ${labelDiningTable} ${diningTable.tableNr}</a></td>							
+				</tr>
+			</c:forEach>
+		
+			<spring:url var="kitchenSubsystem" value="/restaurants/${restaurant.id}/kitchen" />					
+			<a href="${kitchenSubsystem}">${restaurant.id} ${labelKitchenSubsystem}</a>							
+		
+			<spring:url var="waiterSubsystem" value="/restaurants/${restaurant.id}/waiter" />					
+			<a href="${waiterSubsystem}">${restaurant.id} ${labelWaiterSubsystem}</a>							
+		
+			<spring:url var="customerSubsystem" value="/restaurants/${restaurant.id}/customers" />					
+			<a href="${customerSubsystem}">${restaurant.id} ${labelCustomerSubsystem}</a>							
+		</c:if>
+    </sec:authorize>
+
+    <sec:authorize access="isAnonymous()">
+	    <div id="login">
+	       <form name="loginForm" action="${loginUrl}" method="post">
+	           <table>
+	               <caption align="left">${labelLogin}:</caption>
+	               <tr>
+	                   <td>${labelUserName}:</td>
+	                   <td><input type="text" name="j_username"/></td>
+	               </tr>
+	               <tr>
+	                   <td>${labelPassword}:</td>
+	                   <td><input type="password" name="j_password"/></td>
+	               </tr>
+	               <tr>
+	                   <td colspan="2" align="center"><input name="submit" type="submit" value="${labelLogin}"/></td>
+	               </tr>           
+	           </table>
+	       </form>
+	    </div> 
+    </sec:authorize>
+
+</div>
